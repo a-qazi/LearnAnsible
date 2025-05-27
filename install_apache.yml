@@ -1,17 +1,24 @@
 ---
 
-- hosts: Ubuntu
+- hosts: all
   become: true
   tasks:
 
-    - name: Update repository index on Ubuntu hosts
+    - name: Install apache2, php and update repository index on Ubuntu hosts
       apt:
+        name:
+          - apache2
+          - libapache2-mod-php
+        state: latest   
         update_cache: yes
+      when: inventory_hostname in groups['Ubuntu']
 
-    - name: Install apache2 package on Ubuntu hosts
-      apt:
-        name: apache2
 
-    - name: Add php support for Apache on Ubuntu hosts
-      apt:
-        name: libapache2-mod-php
+    - name: Install httpd, php and update repository index on Oracle Linux hosts
+      dnf:
+        name:
+          - httpd
+          - php
+        state: latest   
+        update_cache: yes
+      when: inventory_hostname in groups['OracleLinux']

@@ -1,9 +1,0 @@
----
-
-- hosts: OracleLinux
-  become: true
-  tasks:
-
-    - name: Install httpd package on Oracle Linux hosts
-      dnf:
-        name: httpd
