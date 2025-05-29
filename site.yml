@@ -7,16 +7,43 @@
   - name: install updates (Oracle Linux)
     tags: always
     dnf: 
-      update_only: yes
+      name: "*"
+      state: latest
       update_cache: yes
     when: ansible_distribution == "OracleLinux"
 
   - name: install updates (Ubuntu)
     tags: always
     apt:
-      upgrade: dist
+      name: "*"
+      state: latest
       update_cache: yes
     when: ansible_distribution == 'Ubuntu'
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: create admin user
+    tags: always
+    user:
+      name: admin
+      groups: root
+
+  - name: add ssh key for admin
+    tags: always
+    authorized_key:
+      user: admin
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAoaaFePQjLa7qNNaTAUobP4NPT27IV813nClLoGQCse ansible"
+
+  - name: sudoers file for admin
+    tags: always
+    copy:
+      src: sudoer_admin
+      dest: /etc/sudoers.d/admin
+      owner: root
+      group: root
+      mode: 0440
 
 - hosts: workstations
   become: true
@@ -57,6 +84,30 @@
           - php
         state: latest
       when: ansible_distribution == "OracleLinux"
+
+    - name: start httpd (OracleLinux)
+      tags: httpd,oraclelinux,web
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+      when: ansible_distribution == "OracleLinux"
+
+    - name: change e-mail address from admin
+      tags: apache,http
+      lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^ServerAdmin'
+        line: ServerAdmin admin@example.local
+      when: ansible_distribution == "OracleLinux"
+      register: httpd
+
+    - name: restart httpd (OracleLinux)
+      tags: apache,http,oraclelinux
+      service:
+        name: httpd
+        state: restarted
+      when: httpd.changed
 
     - name: Copy files to default web document folder
       tags: apache,httpd,oraclelinux,ubuntu
