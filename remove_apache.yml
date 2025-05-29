@@ -1,25 +1,22 @@
 ---
 
-- hosts: Ubuntu
+- hosts: all
   become: true
   tasks:
 
-    - name: Remove apache2, php packages and update cache on Ubuntu hosts
+    - name: Remove apache and php packages from  Ubuntu servers
       apt:
         name: 
           - apache2
           - libapache2-mod-php
         state: absent
-        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
 
-- hosts: OracleLinux
-  become: true
-  tasks:
-
-    - name: Remove httpd, php packages and update cache on Oracle Linux
+    - name: Remove apache and php packages from Oracle Linux servers
       ansible.builtin.dnf:
         name:
           - httpd
           - php
         state: absent
         update_cache: yes
+      when: ansible_distribution == "OracleLinux"

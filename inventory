@@ -1,6 +1,9 @@
-[OracleLinux]
-10.0.48.162
-10.0.48.163
-[Ubuntu]
+[web_servers]
 10.0.48.164
+10.0.48.162
+
+[db_servers]
 10.0.48.165
+
+[file_servers]
+10.0.48.163
