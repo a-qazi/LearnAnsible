@@ -40,6 +40,15 @@
         state: latest
       when: ansible_distribution == "OracleLinux"
 
+    - name: Copy files to default web document folder
+      tags: apache,httpd,oraclelinux,ubuntu
+      copy:
+        src: default_site.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: 0644
+
 - hosts: db_servers
   become: true
   tasks:
