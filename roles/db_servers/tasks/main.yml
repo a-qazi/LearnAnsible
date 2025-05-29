@@ -1,0 +1,13 @@
+- name: install mariadb on Oracle Linux servers
+  tags: db,oraclelinux
+  dnf:
+    name: mariadb
+    state: latest
+  when: ansible_distribution == "OracleLinux"
+
+- name: install mariadb on Ubuntu servers
+  tags: db,ubuntu
+  apt:
+    name: mariadb-server
+    state: latest
+  when: ansible_distribution == "Ubuntu"
